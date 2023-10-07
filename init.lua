@@ -1,19 +1,14 @@
 -- Initialize packer.nvim for plugin management
 require('packer').startup(function()
-  -- Packer can manage itself
   use 'wbthomason/packer.nvim'
-  -- Native LSP enhancements
   use 'neovim/nvim-lspconfig'
-  -- Tree viewer
   use 'kyazdani42/nvim-tree.lua'
-  -- Devicons
   use 'kyazdani42/nvim-web-devicons'
-  -- codeium.vim
   use 'Exafunction/codeium.vim'
-  -- Add nvim-treesitter
   use {'nvim-treesitter/nvim-treesitter', run = function() vim.cmd('TSUpdate') end}
-  -- Add presence.nvim
   use 'andweeb/presence.nvim'
+  use 'windwp/nvim-autopairs' -- Auto close pairs, useful for HTML tags
+  use 'hrsh7th/nvim-compe'   -- Autocompletion plugin
 end)
 
 -- Vim settings
@@ -33,13 +28,20 @@ require'nvim-tree'.setup {}
 -- Key mappings for nvim-tree
 vim.api.nvim_set_keymap('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
 
--- Run Python3 code with <Option-Enter> (or <Alt-Enter>) in normal mode
--- Executes the entire file
-vim.api.nvim_set_keymap('n', '<A-CR>', [[<Cmd>!python3 %<CR>]], { noremap = true, silent = false })
+-- Custom function to run code
+function run_code()
+  local filetype = vim.bo.filetype
 
--- Run selected Python3 code with <Option-Enter> (or <Alt-Enter>) in visual mode
--- Executes only the selected lines
-vim.api.nvim_set_keymap('v', '<A-CR>', [[:w !python3<CR>]], { noremap = true, silent = false })
+  if filetype == 'python' then
+    vim.cmd('!python3 %')
+  elseif filetype == 'html' or filetype == 'css' or filetype == 'javascript' then
+    vim.cmd('!open %') -- replace this with the actual command to run HTML, CSS or JS files
+  else
+    print("File type not supported")
+  end
+end
+-- Updated key mapping
+vim.api.nvim_set_keymap('n', '<A-CR>', [[<Cmd>lua run_code()<CR>]], { noremap = true, silent = false })
 
 -- LSP keybindings
 vim.api.nvim_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', { noremap = true, silent = true })
@@ -55,10 +57,8 @@ vim.cmd [[
   highlight CursorLineNr guifg=#ebcb8b guibg=NONE
 ]]
 
--- This is where you could configure icons, if your version of nvim-tree supports it.
+-- Configure icons
 require'nvim-web-devicons'.setup {
-  -- your personnal icons can go here (to override)
-  -- DevIcon will be appended to `name`
   override = {
     python = {
       icon = "🐍",
@@ -66,9 +66,34 @@ require'nvim-web-devicons'.setup {
       name = "Python"
     }
   };
-  -- globally enable default icons (default to false)
-  -- will get overriden by `get_icons` option
   default = true;
 }
 
+-- Configure nvim-autopairs
+require('nvim-autopairs').setup{}
+
+-- Configure nvim-compe for autocompletion
+require'compe'.setup {
+  enabled = true;
+  autocomplete = true;
+  debug = false;
+  min_length = 1;
+  preselect = 'enable';
+  throttle_time = 80;
+  source_timeout = 200;
+  incomplete_delay = 400;
+  max_abbr_width = 100;
+  max_kind_width = 100;
+  max_menu_width = 100;
+  documentation = true;
+
+  source = {
+    path = true;
+    buffer = true;
+    calc = true;
+    nvim_lsp = true;
+    nvim_lua = true;
+    vsnip = true;
+  };
+}
 
