@@ -9,6 +9,7 @@ require('packer').startup(function()
   use 'andweeb/presence.nvim'
   use 'windwp/nvim-autopairs' -- Auto close pairs, useful for HTML tags
   use 'hrsh7th/nvim-compe'   -- Autocompletion plugin
+  use 'github/copilot.vim'
 end)
 
 -- Vim settings
