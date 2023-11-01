@@ -9,6 +9,7 @@ require('packer').startup(function()
   use 'andweeb/presence.nvim'
   use 'windwp/nvim-autopairs' -- Auto close pairs, useful for HTML tags
   use 'hrsh7th/nvim-compe'   -- Autocompletion plugin
+  use 'tpope/vim-commentary'
   --use 'github/copilot.vim'
 end)
 
@@ -35,6 +36,8 @@ function run_code()
 
   if filetype == 'python' then
     vim.cmd('!python3 %')
+  elseif filetype == 'r' then
+    vim.cmd('!Rscript %')
   elseif filetype == 'html' or filetype == 'css' or filetype == 'javascript' then
     vim.cmd('!open %') -- replace this with the actual command to run HTML, CSS or JS files
   else
