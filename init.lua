@@ -7,10 +7,16 @@ require('packer').startup(function()
   use 'Exafunction/codeium.vim'
   use {'nvim-treesitter/nvim-treesitter', run = function() vim.cmd('TSUpdate') end}
   use 'andweeb/presence.nvim'
-  use 'windwp/nvim-autopairs' -- Auto close pairs, useful for HTML tags
-  use 'hrsh7th/nvim-compe'   -- Autocompletion plugin
+  use 'windwp/nvim-autopairs'
+  use 'hrsh7th/nvim-compe'
   use 'tpope/vim-commentary'
-  --use 'github/copilot.vim'
+  use 'lukas-reineke/indent-blankline.nvim' -- Indent line
+  use 'tpope/vim-fugitive' -- Git integration
+  use {
+    'nvim-telescope/telescope.nvim', -- Fuzzy finder
+    requires = { {'nvim-lua/plenary.nvim'} }
+  }
+  -- Add any other plugins here
 end)
 
 -- Vim settings
@@ -33,7 +39,6 @@ vim.api.nvim_set_keymap('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, s
 -- Custom function to run code
 function run_code()
   local filetype = vim.bo.filetype
-
   if filetype == 'python' then
     vim.cmd('!python3 %')
   elseif filetype == 'r' then
@@ -78,7 +83,7 @@ require('nvim-autopairs').setup{}
 
 -- Configure nvim-compe for autocompletion
 require'compe'.setup {
-  enabled = true;
+  enabled = false;
   autocomplete = true;
   debug = false;
   min_length = 1;
@@ -100,4 +105,14 @@ require'compe'.setup {
     vsnip = true;
   };
 }
+
+-- Configure indent-blankline using the new module name
+require("ibl").setup()
+
+-- Configure Telescope
+-- Add keybindings or specific configuration if needed
+-- For example, setting a keybinding for file search:
+vim.api.nvim_set_keymap('n', '<Leader>f', '<Cmd>Telescope find_files<CR>', { noremap = true, silent = true })
+
+-- No specific configuration needed for vim-fugitive as it works with Vim commands
 
